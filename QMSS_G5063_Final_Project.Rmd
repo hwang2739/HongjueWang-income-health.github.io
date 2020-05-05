@@ -171,7 +171,7 @@ p4
 
 # Health outcomes at the local level
 
-```{r, message = FALSE, warning = FALSE, include=FALSE}
+```{r, message = FALSE, warning = FALSE, include=FALSE, eval=FALSE}
 lower48 <- counties(setdiff(state.name, c("Hawaii", "Alaska")), class = "sf")
 
 lower48$STATECOUNTYFP <- paste0(lower48$STATEFP, lower48$COUNTYFP)
@@ -184,7 +184,7 @@ Income <- Income %>%
 
 ## Diabetes
 
-```{r, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE, eval=FALSE}
 Diabetes <- read_csv("Data/DiabetesData.csv")
 
 Diabetes <- Diabetes %>%
@@ -200,7 +200,7 @@ countydiabetesincome$adjustedrate <- countydiabetesincome$Percentage/countydiabe
 
 This plot demonstrates a clear correlation between diabetes rates and income, with higher income counties having lower rates of diabetes. It also shows that while diabetes has increased everywhere over time, the increases have been far more pronounced for poorer counties. Note especially the sharp spike in rates over 2015-2016
 
-```{r, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE, eval=FALSE}
 diabetesplot <- ggplot(filter(countydiabetesincome, income_per_capita < 100000), 
                        aes(x = income_per_capita, y = Percentage, color = region_name)) +
   geom_jitter(alpha = .7) +
@@ -251,7 +251,7 @@ tmap_save(diabetes_adjusted, "diabetes_income_ratio_counties_2016_map.png")
 
 ## Life expectancy
 
-```{r, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE, eval=FALSE}
 LifeExp <- read_csv("Data/ExpectancyData.csv")
 
 LifeExp <- LifeExp %>%
@@ -320,7 +320,7 @@ tmap_save(life_expectancy_adjusted, "life_expectancy_adjusted_counties_2014_map.
 
 ## Infant mortality 
 
-```{r, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE, eval=FALSE}
 im_data <- read_excel("Data/Linked_Birth_Infant_Death_Records_per_1000_by_County_and_Year_Died_2007-2017.xlsx")
 
 im_data <- im_data %>%
@@ -337,7 +337,7 @@ countyinfantincome$adjustedrate <- countyinfantincome$Deathrate/countyinfantinco
 
 Infant mortality shows a clear correlation to income, with higher income counties having lower infant mortality. Neither the pattern nor the overall incidence of child mortality appears to be changing.
 
-```{r, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE, eval=FALSE}
 infantplot <- ggplot(filter(countyinfantincome, income_per_capita < 100000), 
                      aes(x = income_per_capita, y = Deathrate, color = region_name)) +
   geom_jitter(alpha = .7) +
