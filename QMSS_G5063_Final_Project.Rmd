@@ -14,12 +14,15 @@ output:
     fig_caption: yes
     theme: united
     toc: yes
+  pdf_document:
+    toc: yes
 ---
 
 ```{r setup, include = FALSE, echo=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 #devtools::install_github("dkahle/ggmap")
 library(ggmap)
+library(httpuv)
 register_google(key = Sys.getenv("GOOGLE_MAPS_API_KEY"))
 ```
 
@@ -51,6 +54,7 @@ library(leafsync)
 library(acs)
 library(stringr)
 library(sp)
+library(tigris)
 #library(shiny)
 #library(shinythemes)
 library(maptools)
@@ -70,12 +74,12 @@ library(tidycensus)
 library(grid)
 library(geosphere)
 library(lwgeom)
-#library(sf)
+library(sf)
 ```
 
 At the international level, we looked at life expectancy as a function of GDP per capita. From 1952 to 2007, life expectancy has increased overall, and we can clearly see that in most countries, as the national wealth increases, the life expectancy also increases.
 
-```{r, eval=TRUE, message=FALSE, warning=FALSE}
+```{r, eval=FALSE, message=FALSE, warning=FALSE}
 p <- ggplot(gapminder, aes(x = gdpPercap, y=lifeExp, size = pop, colour = country)) +
   geom_point(show.legend = FALSE, alpha = 0.7) +
   scale_color_viridis_d() +
@@ -87,10 +91,12 @@ p <- ggplot(gapminder, aes(x = gdpPercap, y=lifeExp, size = pop, colour = countr
        title = "Life Expectancy vs. Income in the world",
        caption = "Source: IHME")
 
-p + transition_time(year) +
+p <- p + transition_time(year) +
   labs(title = "Life expectancy vs. GDP by country: {frame_time}")+
   view_follow(fixed_y = TRUE)
+anim_save("life.gif")
 ```
+![Life expectancy vs. GDP](Images/life.gif)
 
 This pattern continues at the national level in the US: The richest American men live 15 years longer than the poorest men, while the richest American women live 10 years longer than the poorest women.
 
@@ -216,6 +222,9 @@ diabetesplotanim <- diabetesplot + transition_time(year) +
 diabetesplotanim
 ```
 
+![Diabetes & Income, by region](Images/diabetesplotanim.gif)
+
+
 The first map shows diabetes rates as a percentage of the population for each county in the US. The second maps an adjusted metric, the diabetes ratio/per-capita income ratio. This income-adjusted adjuested ratio is intended to account for variance due to income. Geographic differences in diabetes rates are more muted in the adjusted map, indicating that some of the differences in diabetes levels are actually the result of income clustering. 
 
 ```{r, eval = FALSE}
@@ -226,10 +235,7 @@ diabetes <- tm_shape(filter(countydiabetes, Year == "2016")) +
 
 tmap_save(diabetes, "diabetes_counties_2016_map.png")
 ```
-
-```{r, message = FALSE, warning = FALSE, fig.cap = paste("Diabetes rate by county: 2016")}
-knitr::include_graphics("Images/diabetes_counties_2016_map.png")
-```
+![Diabetes rate by county: 2016](Images/diabetes_counties_2016_map.png)
 
 ```{r, eval = FALSE}
 diabetes_adjusted <- tm_shape(filter(countydiabetesincome, Year == "2016")) +
@@ -240,9 +246,8 @@ diabetes_adjusted <- tm_shape(filter(countydiabetesincome, Year == "2016")) +
 tmap_save(diabetes_adjusted, "diabetes_income_ratio_counties_2016_map.png")
 ```
 
-```{r, message = FALSE, warning = FALSE, fig.cap = paste("Diabetes adjusted metric by county: 2016")}
-knitr::include_graphics("Images/diabetes_income_ratio_counties_2016_map.png")
-```
+![Diabetes adjusted metric by county: 2016](Images/diabetes_income_ratio_counties_2016_map.png)
+
 
 ## Life expectancy
 
@@ -284,9 +289,8 @@ lifeplotanim <- lifeplot + transition_time(year) +
 anim_save("lifeplotanim.gif")
 ```
 
-```{r, message = FALSE, warning = FALSE, fig.cap = paste("Life Expectancy & Income, by region"), out.width="100%", out.height="100%"}
-knitr::include_graphics("Images/lifeplotanim.gif")
-```
+![Life Expectancy & Income, by region](Images/lifeplotanim.gif)
+
 
 The first map shows life expectancy for each county in the US. The second maps an adjusted metric, life expectancy/income per capita. Geographic differences in life expectancy (intensity of color variation) are significantly more muted in the adjusted map, indicating that much of the variance in life expectancy is the result of income clustering. 
 
@@ -300,10 +304,8 @@ life_expectancy <- tm_shape(filter(countylife, Year == "2014")) +
 
 tmap_save(life_expectancy, "life_expectancy_counties_2014_map.png")
 ```
+![Life expectancy by county: 2014](Images/life_expectancy_counties_2014_map.png)
 
-```{r, message = FALSE, warning = FALSE, fig.cap = paste("Life expectancy by county: 2014")}
-knitr::include_graphics("Images/life_expectancy_counties_2014_map.png")
-```
 
 ```{r, eval = FALSE}
 life_expectancy_adjusted <- tm_shape(filter(countylifeincome, Year == "2014")) +
@@ -313,10 +315,8 @@ life_expectancy_adjusted <- tm_shape(filter(countylifeincome, Year == "2014")) +
 
 tmap_save(life_expectancy_adjusted, "life_expectancy_adjusted_counties_2014_map.png")
 ```
+![Life expectancy adjusted metric by county: 2014](Images/life_expectancy_adjusted_counties_2014_map.png)
 
-```{r, message = FALSE, warning = FALSE, fig.cap = paste("Life expectancy adjusted metric by county: 2014")}
-knitr::include_graphics("Images/life_expectancy_adjusted_counties_2014_map.png")
-```
 
 ## Infant mortality 
 
@@ -358,9 +358,8 @@ infantplotanim <- infantplot + transition_time(year) +
 anim_save("infantplotanim.gif")
 ```
 
-```{r, message = FALSE, warning = FALSE, fig.cap = paste("Infant mortality & Income, by region")}
-knitr::include_graphics("Images/infantplotanim.gif")
-```
+![Infant mortality & Income, by region](Images/infantplotanim.gif)
+
 
 
 # Health insurance
@@ -624,7 +623,7 @@ p250_state_0818 <- rbind(p250_state_2008, p250_state_2009, p250_state_2010, p250
 p_state_0818 <- rbind(p138_state_0818, p250_state_0818)
 ```
 
-```{r, message = FALSE, warning = FALSE, out.width="100%", out.height="100%"}
+```{r, message = FALSE, warning = FALSE, fig.asp = 1, fig.width=6, fig.height=10}
 p1 <- p_state_0818 %>% mutate(year=as.factor(year), 
                               iprcat=ifelse(iprcat==2, "At or below 250% FPL", 
                                             "At or below 138% FPL")) %>%
@@ -645,7 +644,7 @@ p1 <- p_state_0818 %>% mutate(year=as.factor(year),
         plot.title = element_text(face = "bold.italic", hjust = 0.5),
         legend.title = element_blank())
 
-ggplotly(p1, tooltip = "text") %>% 
+ggplotly(p1, tooltip = "text", height = 350, width=600) %>% 
   config(displayModeBar = FALSE) %>%
   layout(hoverlabel = list(bgcolor = "white", font = list(family = "Georgia")), 
          legend = list(orientation = "h", y=1.08))
@@ -659,7 +658,7 @@ From the above graphic, we can see that the lower the income, although with some
 
 **Hover over data points of interest**
 
-```{r, message=FALSE, warning=FALSE, out.width="100%", out.height="100%"}
+```{r, message=FALSE, warning=FALSE}
 income <- read.csv("Data/Hongjue_BEA_Income_Per_Capita_by_State_1990-2019.csv")
 
 income <- income %>% mutate(fips = ifelse(str_length(GeoFips) < 5, paste0(0, GeoFips), GeoFips)) %>%
@@ -687,7 +686,7 @@ p2 <- ggplot(inc_insur, aes(x=NUI/NIPR, y=income_per_capita, color=GeoName, alph
   xlab("Rate of uninsurance") + 
   ylab("Income per capita\n")
 
-ggplotly(p2, tooltip = "text") %>% 
+ggplotly(p2, tooltip = "text", height = 350, width=600) %>% 
   config(displayModeBar = FALSE) %>%
   layout(hoverlabel = list(bgcolor = "white", font = list(family = "Georgia")))
 ```
@@ -714,7 +713,7 @@ dt <- inc_insur %>%
   mutate_geocode(state)
 ```
 
-```{r, message=FALSE, warning=FALSE, out.width="100%", out.height="100%"}
+```{r, message=FALSE, warning=FALSE, fig.width=6, fig.height=10}
 dt_year <- dt %>% filter(year==2008)
 
 popup = paste("State: ", dt_year$state,
@@ -727,7 +726,7 @@ pal1 <- colorBin("YlOrRd", domain = states.merged$uninsured, bins = c(0, 0.05, 0
 
 pal2 <- colorBin("BuGn", domain = states.merged$income_per_capita, bins = c(20000:85000))
 
-leaflet(states.merged) %>% addTiles() %>%
+leaflet(states.merged, height="100%", width="100%") %>% addTiles() %>%
   setView(-96, 37.8, 4) %>%
   addPolygons(fillColor = ~pal1(uninsured),
             fillOpacity = 0.6, color = "darkgrey", weight = 1.5,
