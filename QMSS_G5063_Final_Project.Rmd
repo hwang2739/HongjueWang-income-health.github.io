@@ -386,7 +386,7 @@ sahie_2017 <- read.csv("Data/sahie_2017_FIPS.csv", header = TRUE)
 sahie_2018 <- read.csv("Data/sahie_2018_FIPS.csv", header = TRUE)
 ```
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
 # Cleaning data
 sahie_2008 <- sahie_2008 %>% 
   select(year,agecat,racecat,sexcat,iprcat,NIPR,NUI,NIC,PCTUI,PCTIC,PCTELIG,PCTLIIC,
@@ -522,7 +522,7 @@ sahie_2018 <- sahie_2018 %>%
   mutate(fips = ifelse(str_length(fips) < 5, paste0(0, fips), fips))
 ```
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
 # Organize by counties
 
 county_2008 <- sahie_2008 %>% filter(agecat==0 & sexcat == 0 & racecat == 0 & iprcat == 0 & county_name != "")
@@ -538,7 +538,7 @@ county_2017 <- sahie_2017 %>% filter(agecat==0 & sexcat == 0 & racecat == 0 & ip
 county_2018 <- sahie_2018 %>% filter(agecat==0 & sexcat == 0 & racecat == 0 & iprcat == 0 & county_name != "")
 ```
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
 # Organize by states
 
 state_2008 <- sahie_2008 %>% 
@@ -567,7 +567,7 @@ state_0818 <- rbind(state_2008, state_2009, state_2010, state_2011, state_2012,
                     state_2013, state_2014, state_2015, state_2016, state_2017, state_2018)
 ```
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
 p138_state_2008 <- sahie_2008 %>% 
   filter(agecat==0 & sexcat == 0 & racecat == 0 & iprcat == 3 & county_name == "") %>% select(-county_name)
 p138_state_2009 <- sahie_2009 %>% 
@@ -623,7 +623,7 @@ p250_state_0818 <- rbind(p250_state_2008, p250_state_2009, p250_state_2010, p250
 p_state_0818 <- rbind(p138_state_0818, p250_state_0818)
 ```
 
-```{r, message = FALSE, warning = FALSE, fig.asp = 1, fig.width=6, fig.height=10}
+```{r, message = FALSE, warning = FALSE, fig.asp = 1, fig.width=10, fig.height=8}
 p1 <- p_state_0818 %>% mutate(year=as.factor(year), 
                               iprcat=ifelse(iprcat==2, "At or below 250% FPL", 
                                             "At or below 138% FPL")) %>%
@@ -644,7 +644,7 @@ p1 <- p_state_0818 %>% mutate(year=as.factor(year),
         plot.title = element_text(face = "bold.italic", hjust = 0.5),
         legend.title = element_blank())
 
-ggplotly(p1, tooltip = "text", height = 350, width=600) %>% 
+ggplotly(p1, tooltip = "text", height = 400, width=700) %>% 
   config(displayModeBar = FALSE) %>%
   layout(hoverlabel = list(bgcolor = "white", font = list(family = "Georgia")), 
          legend = list(orientation = "h", y=1.08))
@@ -658,7 +658,7 @@ From the above graphic, we can see that the lower the income, although with some
 
 **Hover over data points of interest**
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, fig.asp = 1, fig.width=10, fig.height=8}
 income <- read.csv("Data/Hongjue_BEA_Income_Per_Capita_by_State_1990-2019.csv")
 
 income <- income %>% mutate(fips = ifelse(str_length(GeoFips) < 5, paste0(0, GeoFips), GeoFips)) %>%
@@ -686,7 +686,7 @@ p2 <- ggplot(inc_insur, aes(x=NUI/NIPR, y=income_per_capita, color=GeoName, alph
   xlab("Rate of uninsurance") + 
   ylab("Income per capita\n")
 
-ggplotly(p2, tooltip = "text", height = 350, width=600) %>% 
+ggplotly(p2, tooltip = "text", height = 400, width=700) %>% 
   config(displayModeBar = FALSE) %>%
   layout(hoverlabel = list(bgcolor = "white", font = list(family = "Georgia")))
 ```
