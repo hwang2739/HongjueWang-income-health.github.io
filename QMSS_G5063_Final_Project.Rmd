@@ -658,7 +658,7 @@ From the above graphic, we can see that the lower the income, although with some
 
 **Hover over data points of interest**
 
-```{r, message=FALSE, warning=FALSE, fig.asp = 1, fig.width=10, fig.height=8}
+```{r, message=FALSE, warning=FALSE, fig.asp = 1, fig.width=12, fig.height=8}
 income <- read.csv("Data/Hongjue_BEA_Income_Per_Capita_by_State_1990-2019.csv")
 
 income <- income %>% mutate(fips = ifelse(str_length(GeoFips) < 5, paste0(0, GeoFips), GeoFips)) %>%
@@ -686,7 +686,7 @@ p2 <- ggplot(inc_insur, aes(x=NUI/NIPR, y=income_per_capita, color=GeoName, alph
   xlab("Rate of uninsurance") + 
   ylab("Income per capita\n")
 
-ggplotly(p2, tooltip = "text", height = 400, width=700) %>% 
+ggplotly(p2, tooltip = "text", height = 400, width=780) %>% 
   config(displayModeBar = FALSE) %>%
   layout(hoverlabel = list(bgcolor = "white", font = list(family = "Georgia")))
 ```
