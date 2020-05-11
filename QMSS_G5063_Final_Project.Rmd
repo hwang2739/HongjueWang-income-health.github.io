@@ -286,7 +286,7 @@ lifeplot <- ggplot(filter(countylifeincome, income_per_capita < 100000),
 
 lifeplotanim <- lifeplot + transition_time(year) +
   labs(title = "Life expectancy vs. income: {frame_time}")
-
+lifeplotanim
 anim_save("lifeplotanim.gif")
 ```
 
@@ -355,7 +355,7 @@ infantplot <- ggplot(filter(countyinfantincome, income_per_capita < 100000),
 
 infantplotanim <- infantplot + transition_time(year) +
   labs(title = "Infant mortality vs. income: {frame_time}")
-
+infantplotanim
 anim_save("infantplotanim.gif")
 ```
 
