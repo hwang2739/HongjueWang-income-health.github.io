@@ -3,8 +3,8 @@ title: 'Group B Final Project: Income and Healthcare'
 author:
 - name: Hongjue Wang
 - name: Alison Ryland
-- name: Xun Wei
 - name: Tolu Bukola
+- name: Xun Wei
 date: "`r format(Sys.time(), '%d %B %Y')`"
 output:
   html_document:
@@ -220,6 +220,7 @@ diabetesplotanim <- diabetesplot + transition_time(year) +
   labs(title = "Diabetes rate vs. income: {frame_time}\n")
 
 diabetesplotanim
+anim_save("diabetesplotanim.gif")
 ```
 
 ![Diabetes & Income, by region](Images/diabetesplotanim.gif)
@@ -741,8 +742,6 @@ leaflet(states.merged) %>% addTiles() %>%
   addLayersControl(
     baseGroups = c("Uninsurance rate", "Income level"),
     options = layersControlOptions(collapsed = FALSE))
-
-# height="100%", width="100%"
 ```
 
 To make it clearer and easier to understand, we created a data table for our users to explore the statistics of their interest:
