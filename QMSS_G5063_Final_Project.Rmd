@@ -714,7 +714,7 @@ dt <- inc_insur %>%
   mutate_geocode(state)
 ```
 
-```{r, message=FALSE, warning=FALSE, fig.width=6, fig.height=10}
+```{r, message=FALSE, warning=FALSE, fig.width=10, fig.height=6}
 # dt_year <- dt %>% filter(year==2008)
 dt_year <- dt %>% group_by(state) %>% 
   summarise(income_per_capita=mean(income_per_capita), uninsured=mean(uninsured), 
