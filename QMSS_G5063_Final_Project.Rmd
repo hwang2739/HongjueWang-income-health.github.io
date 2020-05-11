@@ -706,6 +706,7 @@ dt.geo <- dt %>% mutate_geocode(state)
 
 To visualize this in a map, we created a Leaflet map with separate layers for the uninsurance rate and income level, shown below for the year 2008. Using this visualization we can observe that in general, the northeast and west coast regions had higher incomes per capita, while the souths, midwest, and Alaska were struggling with the highest uninsurance rate. 
 
+
 ```{r, message=FALSE, warning=FALSE}
 dt <- inc_insur %>%
   mutate(uninsured = round(NUI/NIPR,2), state = as.character(GeoName)) %>% 
@@ -714,19 +715,22 @@ dt <- inc_insur %>%
 ```
 
 ```{r, message=FALSE, warning=FALSE, fig.width=6, fig.height=10}
-dt_year <- dt %>% filter(year==2008)
+# dt_year <- dt %>% filter(year==2008)
+dt_year <- dt %>% group_by(state) %>% 
+  summarise(income_per_capita=mean(income_per_capita), uninsured=mean(uninsured), 
+            lon=mean(lon), lat=mean(lat)) %>%
+  mutate(state=as.factor(state))
 
-popup = paste("State: ", dt_year$state,
-              "<br>Income per capita: ", dt_year$income_per_capita,
-              "<br>Uninsured rate: ", dt_year$uninsured)
-
-states.merged <- merge(x=states, y=dt_year, by.x=c("NAME"), by.y=c("state"), duplicateGeoms = TRUE)
+states.merged <- merge(x=states, y=dt_year, by.x="NAME", by.y="state")
 
 pal1 <- colorBin("YlOrRd", domain = states.merged$uninsured, bins = c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3))
-
 pal2 <- colorBin("BuGn", domain = states.merged$income_per_capita, bins = c(20000:85000))
 
-leaflet(states.merged, height="100%", width="100%") %>% addTiles() %>%
+popup = paste("State: ", states.merged@data$NAME,
+              "<br>Income per capita: ", round(states.merged@data$income_per_capita,2),
+              "<br>Uninsured rate: ", round(states.merged@data$uninsured,2))
+
+leaflet(states.merged) %>% addTiles() %>%
   setView(-96, 37.8, 4) %>%
   addPolygons(fillColor = ~pal1(uninsured),
             fillOpacity = 0.6, color = "darkgrey", weight = 1.5,
@@ -737,6 +741,8 @@ leaflet(states.merged, height="100%", width="100%") %>% addTiles() %>%
   addLayersControl(
     baseGroups = c("Uninsurance rate", "Income level"),
     options = layersControlOptions(collapsed = FALSE))
+
+# height="100%", width="100%"
 ```
 
 To make it clearer and easier to understand, we created a data table for our users to explore the statistics of their interest:
