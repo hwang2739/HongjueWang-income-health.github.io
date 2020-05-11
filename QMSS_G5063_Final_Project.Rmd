@@ -100,6 +100,8 @@ anim_save("life.gif")
 
 This pattern continues at the national level in the US: The richest American men live 15 years longer than the poorest men, while the richest American women live 10 years longer than the poorest women.
 
+Note: the size of the points represents the number of people in different countries.
+
 ```{r, eval=TRUE, message=FALSE, warning=FALSE}
 df1 <- read.csv("Data/health_ineq_online_table_1.csv")
 df1 <- df1 %>% mutate(gnd = ifelse(gnd=="F", "Female", "Male"))
@@ -293,7 +295,7 @@ anim_save("lifeplotanim.gif")
 ![Life Expectancy & Income, by region](Images/lifeplotanim.gif)
 
 
-The first map shows life expectancy for each county in the US. The second maps an adjusted metric, life expectancy/income per capita. Geographic differences in life expectancy (intensity of color variation) are significantly more muted in the adjusted map, indicating that much of the variance in life expectancy is the result of income clustering. 
+The first map shows life expectancy for each county in the US. The second maps an adjusted metric, life expectancy/income per capita. Geographic differences in life expectancy (intensity of color variation) are significantly more muted in the adjusted map, indicating that much of the variance in life expectancy is the result of income clustering. The poor counties experiencing decreasing life expectancy are largely in the South and Midwest.
 
 ## Regular map
 
@@ -705,7 +707,7 @@ dt <- inc_insur %>%
 dt.geo <- dt %>% mutate_geocode(state)
 ```
 
-To visualize this in a map, we created a Leaflet map with separate layers for the uninsurance rate and income level, shown below for the year 2008. Using this visualization we can observe that in general, the northeast and west coast regions had higher incomes per capita, while the souths, midwest, and Alaska were struggling with the highest uninsurance rate. 
+To visualize this in a map, we created a Leaflet map with separate layers for the uninsurance rate and income level, shown below for the years 2008-2018 (averaged). The color density corresponds to the uninsurance rate and the average income per capita, respectively. Using this visualization we can observe that in general, the northeast and west coast regions had higher incomes per capita, while the souths, midwest, and Alaska were struggling with the highest uninsurance rate. 
 
 
 ```{r, message=FALSE, warning=FALSE}
